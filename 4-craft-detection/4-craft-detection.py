@@ -251,7 +251,7 @@ def print_sigma_summary(sigma_output: SigmaRuleOutput):
 def main():
     parser = argparse.ArgumentParser(description="Generate Sigma detection rules from exploit analysis")
     parser.add_argument("target", help="Path to exploit file, analysis JSON, or directory")
-    parser.add_argument("-o", "--output", help="Output directory for Sigma rules")
+    parser.add_argument("-o", "--output", help="Output directory for Sigma rules (default: ./result/)")
     parser.add_argument("--json", action="store_true", help="Output results as JSON to stdout")
     parser.add_argument("-m", "--model", default="gpt-4o-mini", help="OpenAI model to use")
     parser.add_argument("-t", "--temperature", type=float, default=0.1, help="Model temperature")
@@ -260,6 +260,11 @@ def main():
                         help="Run analysis first (use with exploit files)")
     
     args = parser.parse_args()
+    
+    # Set default output directory to 'result' folder in script directory
+    if not args.output and not args.json:
+        script_dir = Path(__file__).parent
+        args.output = str(script_dir / "result")
     
     # Check if OpenAI API key is set
     if not os.getenv("OPENAI_API_KEY"):
@@ -361,13 +366,13 @@ def main():
         for i, result in enumerate(all_results):
             print_sigma_summary(result)
             
-            if args.output:
-                prefix = f"{args.prefix}_{i+1}" if len(all_results) > 1 else args.prefix
-                save_sigma_rules(result, args.output, prefix)
+            # Always save rules (using default or specified output directory)
+            prefix = f"{args.prefix}_{i+1}" if len(all_results) > 1 else args.prefix
+            save_sigma_rules(result, args.output, prefix)
         
-        if not args.output:
-            print("\nUse --output to save Sigma rules to files")
-            print("Example: python 4-craft-detection.py analysis.json --output ./sigma_rules/")
+        print(f"\n✓ Sigma rules saved to: {args.output}")
+        print("Use --output to specify a different directory")
+        print("Example: python 4-craft-detection.py analysis.json --output ./custom_rules/")
 
 
 if __name__ == "__main__":
