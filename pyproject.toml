@@ -1,0 +1,21 @@
+[project]
+name = "mallory_prompt_or_gtfo_teaser"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name="Jonathan Cran", email="jcran@mallory.ai"}
+]
+requires-python = "==3.13.*"
+dependencies = [
+    "langchain-core>=0.3.74",
+    "langchain-openai>=0.3.30",
+    "beautifulsoup4>=4.13.4",
+    "requests>=2.32.4",
+    "pydantic>=2.11.7",
+    "langgraph>=0.0.26",
+]
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm]
+distribution = false
