@@ -1,0 +1,50 @@
+{
+  "content_extraction": {
+    "url": "https://www.rapid7.com/blog/post/2013/09/30/metasploit-releases-cve-2013-3893-ie-setmousecapture-use-after-free/",
+    "title": "Metasploit Releases CVE-2013-3893 | Rapid7 Blog",
+    "content": "Recently the public has shown a lot of interest in the new Internet Explorer vulnerability (\nCVE-2013-3893\n) that has been exploited in the wild, which was initially discovered in Japan. At the time of this writing there is still no patch available, but there is still at least a temporary fix-it that you can apply from Microsoft, which \ncan be downloaded here\n.\nThe nitty gritty\nWe started noticing CVE-2013-3893 almost two weeks ago, but during that time we couldn't find a sample of it, \nso I asked publicly\n, and waited. Luckily our Metasploit contributor \n@binjo\n found a sample on Jsunpack, and was kind enough to share that information with me. Since this bug has been going on for awhile, plus I'm releasing a Metasploit module for it, there's no point to hide it, so here you go (resource no longer available).\u00a0 If you want a cleaner version of the trigger for debugging purposes, you can \nget it here\n. A brief technical writeup about the bug can be found on \nMicrosoft's TechNet Blog here\n.\nThe vulnerability affects Internet Explorer from 6 all the way to 11, however, the exploit in the wild primarily targets Internet Explorer 8 on Windows XP, and Internet Explorer 8 and 9 on Windows 7. This part is a little confusing, because there's more to it:\nFor IE8 with XP, the exploit fingerprints regions such as English, Chinese (including Taiwan, Hong Kong, China, Singapore), French, German, Japanese, Portuguese, Korean, and Russian. However, it is only tweaked for English, Chinese, Japanese, and Korean, which makes sense because XP is still pretty popular in Asian countries. This also just means a portion of the fingerprinting code seems junk, and appears to be reused since at least 2012, as this \nmalicious MS12-037 code\n indicates. Perhaps these exploits are from the same exploit pack with the same library, I don't know for sure.\nWindows 7 targets don't seem to have this language restriction. Instead, the exploit would try against any Windows 7 machines (IE8/IE9) as long as Office 2007 or Office 2010 is installed.\u00a0 This is because the Microsoft Office Help Data Services Module (hxds.dll) can be loaded in IE, and is required to leverage \nReturn-Oriented Programming\n in order to bypass DEP and ASLR, and gain arbitrary code execution. The fingerprinting code for Office is also \nreused\n.\nHopefully the above clarifies about who the targets are. However, I should also remind everyone again that the vulnerability affects IE 6/7/8/9/10/11. So at any moment this exploit can be improved to target more users around the world, if not already.\n\"If you build it, nerds will come\"\nThe Metasploit module currently can be only tested on Internet Explorer 9 on Windows 7 SP1 with either Office 2007 or Office 2010 installed, as the following screenshots demonstrate:\nie_setmousecapture_uaf firing against IE 9 on Windows 7 SP1 with Microsoft Office 2007:\n\nie_setmousecapture_uaf firing against IE 9 on Windows 7 SP1 with Microsoft Office 2010:\n\nGo Ninja!\nThe CVE-2013-3893 exploit can be obtained by using the \nmsfupdate\n utility in Metasploit Framework, and feel free to fire up that bad boy. If you are on Metasploit Pro, this exploit is expected to go to the upcoming update, and you can check this through the Software Updates menu under Administration. If you are new to Metasploit, you can get started by \ndownloading the software here\n.\nUpdate\nOct 8th 2013 - Security update \nMS13-080 is available\n.\nAuthor\nWei Chen\nAuthor Posts",
+    "content_length": 3454,
+    "extraction_strategy": {
+      "content_tag_name": "article",
+      "content_tag_class": null,
+      "content_tag_id": null,
+      "content_match_method": "tag"
+    }
+  },
+  "intelligence_analysis": {
+    "url": "https://www.rapid7.com/blog/post/2013/09/30/metasploit-releases-cve-2013-3893-ie-setmousecapture-use-after-free/",
+    "entities": [
+      "CVE-2013-3893",
+      "MS13-080",
+      "Microsoft Security Advisory 2887505",
+      "Internet Explorer 6/7/8/9/10/11",
+      "Internet Explorer 8",
+      "Internet Explorer 9",
+      "Windows XP",
+      "Windows 7 SP1",
+      "Microsoft Office 2007",
+      "Microsoft Office 2010",
+      "Microsoft Office Help Data Services Module (hxds.dll)",
+      "Return-Oriented Programming (ROP)",
+      "DEP",
+      "ASLR",
+      "Metasploit Framework",
+      "Metasploit Pro",
+      "Metasploit module: ie_setmousecapture_uaf",
+      "Rapid7",
+      "Microsoft TechNet Blog",
+      "MS12-037 (referenced prior malicious code)",
+      "Jsunpack",
+      "Wei Chen",
+      "@binjo"
+    ],
+    "findings": "Summary: The post documents active exploitation of CVE-2013-3893, a use-after-free in Internet Explorer\u2019s setMouseCapture, and the release of a Metasploit exploit module (ie_setmousecapture_uaf). Initially unpatched, it was later fixed by MS13-080. The exploit was observed in the wild (first noted in Japan), targets primarily IE8 on Windows XP and IE8/IE9 on Windows 7, and leverages hxds.dll from Microsoft Office installations to build a ROP chain to bypass DEP/ASLR.\n\nSecurity-relevant entities and scope:\n- Vulnerability: CVE-2013-3893 (IE setMouseCapture use-after-free) affects IE 6\u201311. Exploit focus on IE8 (XP) and IE8/IE9 (Windows 7).\n- Patch status: Addressed by MS13-080 (released Oct 8, 2013). Prior temporary mitigation via Microsoft \u201cFix it\u201d from Advisory 2887505.\n- Exploit availability: Public Metasploit module (ie_setmousecapture_uaf) increases likelihood of commoditized exploitation.\n- Bypass techniques: ROP using Microsoft Office Help Data Services Module (hxds.dll) loaded into IE to bypass DEP/ASLR, particularly on Windows 7 with Office 2007/2010 installed.\n- Targeting/fingerprinting: Language/region fingerprinting for XP/IE8 payloads (English, Chinese variants, Japanese, Korean prioritized). Windows 7 targeting based on presence of Office 2007/2010 rather than language.\n- Possible exploit-pack reuse: Fingerprinting code appears reused from earlier malicious code tied to MS12-037-era exploits.\n\nThreat indicators and implications:\n- Technical indicators:\n  - Module load behavior: iexplore.exe loading hxds.dll (unusual for regular browsing; used here for ROP).\n  - Browser/OS combos at risk: IE8 on XP; IE8/IE9 on Win7 with Office 2007/2010.\n  - Exploit artifact names: setMouseCapture/use-after-free; Metasploit module name ie_setmousecapture_uaf.\n  - Fingerprinting patterns: heavy language/locale checks in malicious JS prior to exploitation; Office presence checks on Win7.\n- Operational risk:\n  - With Metasploit support, drive-by and phishing kits likely integrated this exploit widely in 2013\u20132014. Legacy systems still running these stacks remain highly exposed if unpatched.\n  - Environments with legacy IE and Office 2007/2010 can be specifically targeted via hxds.dll for DEP/ASLR bypass.\n\nActionable findings and recommendations:\n- Patch/upgrade:\n  - Ensure MS13-080 (Oct 8, 2013) and subsequent cumulative IE updates are applied everywhere. Any system still on IE8/IE9, Windows XP, or unmaintained Windows 7 builds should be retired or isolated; upgrade to supported browsers/OS immediately.\n  - Fully patch or decommission Office 2007/2010. If legacy Office must remain, ensure latest updates are applied and limit its ability to load into browser processes.\n- Mitigations/hardening:\n  - Remove or restrict IE usage for general web access; enforce modern browsers with sandboxing.\n  - Implement EMET-style mitigations or their modern equivalents (Exploit Protection/ASR rules) to block ROP/shellcode in iexplore.exe and prevent loading of hxds.dll into internet-facing processes.\n  - Enable Enhanced Protected Mode/64-bit tabs (where applicable) and disable Active Scripting for untrusted zones.\n- Detection/monitoring:\n  - Monitor for iexplore.exe loading hxds.dll (e.g., Sysmon Event ID 7 ImageLoad), especially followed by process injection or child process creation.\n  - Hunt for historical web proxy logs showing delivery of IE-targeted exploit pages with locale/Office fingerprinting, and JavaScript referencing setMouseCapture or unusual heap-spray/ROP constructs.\n  - Alert on iexplore.exe spawning abnormal child processes (cmd.exe, powershell.exe, wscript.exe) or unexpected network beacons post-browse.\n- Exposure review:\n  - Inventory and remediate any systems still running IE8/IE9, XP, or unpatched Win7 with Office 2007/2010. Consider network isolation and VDI/remote browser isolation for critical legacy apps.\n- Incident response:\n  - If indicators are observed, collect browser memory and module load telemetry, examine recent browsing sessions, and reimage affected hosts due to likely code execution.\n",
+    "references": [
+      "https://www.rapid7.com/blog/post/2013/09/30/metasploit-releases-cve-2013-3893-ie-setmousecapture-use-after-free/",
+      "https://nvd.nist.gov/vuln/detail/CVE-2013-3893",
+      "https://learn.microsoft.com/en-us/security-updates/securitybulletins/2013/ms13-080",
+      "https://technet.microsoft.com/en-us/security/advisory/2887505",
+      "https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/browser/ie_setmousecapture_uaf.rb"
+    ]
+  }
+}
