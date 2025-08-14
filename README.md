@@ -1,4 +1,4 @@
-some demos from [Prompt or GTFO IV](https://docs.google.com/forms/d/e/1FAIpQLSflm0dOOajZGbW3lxt2FgdYq6Ka5X-NeDJEk3TYVHxm2pH7VQ/viewform)
+some demos from [Prompt or GTFO IV](https://linkedin.com/posts/promptorgtfo_promptgtfo-4-do-pits-dream-of-electric-activity-7360845210446159873-wGax)
 
 Demos: 
 * 1-analyze-intelligence-url
