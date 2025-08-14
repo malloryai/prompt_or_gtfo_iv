@@ -15,7 +15,8 @@ dependencies = [
     "langgraph>=0.0.26",
     "chunkr-ai",
     "vt-py>=0.21.0",
-    "pyyaml>=6.0"
+    "pyyaml>=6.0",
+    "mitreattack-python>=5.0.0"
 ]
 readme = "README.md"
 license = {text = "MIT"}

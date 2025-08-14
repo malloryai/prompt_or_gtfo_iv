@@ -1,0 +1,34 @@
+title: Detect Suspicious File Access Patterns
+id: d3e4f5g6-h7i8-j9k0-l1m2-n3o4p5q6r7s8
+status: test
+description: Detects access attempts to sensitive files via the assets endpoint, indicating
+  potential path traversal exploitation.
+references:
+- CVE-2023-32235
+author: AI-Generated Detection
+date: '2023-10-01'
+modified: '2023-10-01'
+tags:
+- T1071
+- T1070
+- file-access
+logsource:
+  product: application
+  service: ghost
+detection:
+  selection:
+    file.accessed:
+    - package.json
+    - config.production.json
+    - .env
+    - routes.yaml
+    - ghost.log
+    - README.md
+    - yarn.lock
+    - package-lock.json
+    - Dockerfile
+    - docker-compose.yml
+  condition: selection
+falsepositives:
+- Legitimate application behavior accessing configuration files.
+level: high

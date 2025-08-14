@@ -78,7 +78,7 @@ class SigmaRuleOutput(BaseModel):
 class SigmaRuleGenerator:
     """Generates Sigma detection rules using LangChain and OpenAI"""
     
-    def __init__(self, model_name: str = "gpt-4o-mini", temperature: float = 0.1):
+    def __init__(self, model_name: str = "gpt-5-mini", temperature: float = 0.1):
         self.llm = ChatOpenAI(
             model=model_name,
             temperature=temperature
@@ -253,7 +253,7 @@ def main():
     parser.add_argument("target", help="Path to exploit file, analysis JSON, or directory")
     parser.add_argument("-o", "--output", help="Output directory for Sigma rules (default: ./result/)")
     parser.add_argument("--json", action="store_true", help="Output results as JSON to stdout")
-    parser.add_argument("-m", "--model", default="gpt-4o-mini", help="OpenAI model to use")
+    parser.add_argument("-m", "--model", default="gpt-5-mini", help="OpenAI model to use")
     parser.add_argument("-t", "--temperature", type=float, default=0.1, help="Model temperature")
     parser.add_argument("--prefix", default="detection", help="Prefix for output files")
     parser.add_argument("--analyze", action="store_true", 

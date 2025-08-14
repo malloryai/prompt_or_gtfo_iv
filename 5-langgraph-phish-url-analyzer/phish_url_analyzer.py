@@ -302,7 +302,7 @@ def create_url_scanner_agent():
     """Create the LangGraph agent for URL scanning."""
     
     # Initialize the language model
-    model = ChatOpenAI(model="gpt-4o", temperature=0)
+    model = ChatOpenAI(model="gpt-5", temperature=0)
     
     # Create tools list
     tools = [scan_url_with_urlscan, scan_url_with_virustotal]

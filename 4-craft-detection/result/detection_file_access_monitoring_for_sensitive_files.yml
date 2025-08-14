@@ -1,0 +1,29 @@
+title: File Access Monitoring for Sensitive Files
+id: f1a2b3c4-d5e6-7f8a-9a0b-b1c2d3e4f5a6
+status: test
+description: Monitors file access patterns for sensitive files that may be targeted
+  by path traversal attacks.
+references:
+- CVE-2023-32235
+author: AI-Generated Detection
+date: '2023-10-01'
+modified: '2023-10-01'
+tags:
+- T1071
+- T1203
+- file
+logsource:
+  product: system
+  service: file
+detection:
+  selection:
+    file.path:
+    - /path/to/ghost/assets/built/package.json
+    - /path/to/ghost/assets/built/config.production.json
+    - /path/to/ghost/assets/built/.env
+    file.access: read
+  condition: selection
+falsepositives:
+- Legitimate application processes accessing configuration files.
+- Backup or maintenance scripts accessing sensitive files.
+level: high

@@ -1,0 +1,28 @@
+title: Detect Unusual 200 Responses on Assets Endpoint
+id: c7d8e9f0-a1b2-3c4d-5e6f-7g8h9i0j1k2l
+status: test
+description: Detects HTTP 200 responses from the /assets/built/ endpoint that return
+  non-standard content types or unexpected file types.
+references:
+- CVE-2023-32235
+author: AI-Generated Detection
+date: '2023-10-01'
+modified: '2023-10-01'
+tags:
+- T1071
+- T1070
+- web
+logsource:
+  product: webserver
+  service: http
+detection:
+  selection:
+    http.response.status_code: 200
+    http.response.content_type:
+    - text/plain
+    - application/json
+    http.request.uri: /assets/built/*
+  condition: selection
+falsepositives:
+- Legitimate API responses that may return JSON or plain text.
+level: medium

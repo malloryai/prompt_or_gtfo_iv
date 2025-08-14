@@ -1,0 +1,29 @@
+title: Detect Path Traversal Attempts in HTTP Requests
+id: b1a2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+status: test
+description: Detects HTTP GET requests to the /assets/built/ endpoint containing path
+  traversal patterns such as '../' or encoded variants.
+references:
+- CVE-2023-32235
+author: AI-Generated Detection
+date: '2023-10-01'
+modified: '2023-10-01'
+tags:
+- T1071
+- T1070
+- web
+logsource:
+  product: webserver
+  service: http
+detection:
+  selection:
+    http.request.method: GET
+    http.request.uri:
+    - '*../*'
+    - '*%2e%2e*'
+    - '*%5c*'
+    - '*%c0%af*'
+  condition: selection
+falsepositives:
+- Legitimate requests for assets that may include similar patterns in filenames.
+level: high

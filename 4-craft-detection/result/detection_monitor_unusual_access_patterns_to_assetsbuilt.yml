@@ -1,0 +1,27 @@
+title: Monitor Unusual Access Patterns to /assets/built/
+id: e8f9a0b1-2c3d-4e5f-8f9a-0b1c2d3e4f5a
+status: test
+description: Detects unusual access patterns to the /assets/built/ endpoint that may
+  indicate exploitation attempts.
+references:
+- CVE-2023-32235
+author: AI-Generated Detection
+date: '2023-10-01'
+modified: '2023-10-01'
+tags:
+- T1071
+- T1203
+- web
+logsource:
+  product: webserver
+  service: http
+detection:
+  selection:
+    http.request.uri: /assets/built/*
+    http.response.status_code: 200
+    http.response.body: '*'
+  condition: selection and not http.response.body in ['expected content']
+falsepositives:
+- Legitimate access to the /assets/built/ endpoint.
+- Automated tools or scripts accessing the endpoint.
+level: medium
