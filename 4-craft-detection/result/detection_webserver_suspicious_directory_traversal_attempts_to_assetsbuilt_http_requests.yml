@@ -1,0 +1,40 @@
+title: 'Webserver: Suspicious directory traversal attempts to /assets/built/ (HTTP
+  requests)'
+id: d5a3f2b2-8f1c-4b7d-a1c2-3f9b6f6e8c9a
+status: test
+description: Detect HTTP GET requests to /assets/built/ that include directory traversal
+  sequences or common encoded/obfuscated traversal variants. This targets attempts
+  to read files outside the intended assets directory (CVE-2023-32235, Ghost < 5.42.1).
+references:
+- CVE-2023-32235
+- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-32235
+- https://ghost.org
+- 'Exploit analysis: Path traversal via /assets/built/ (directory traversal payload
+  variants)'
+author: AI-Generated Detection
+date: '2025-08-14'
+modified: '2025-08-14'
+tags:
+- attack.persistence
+- web
+- network
+- T1190
+- T1083
+- CVE-2023-32235
+- attack.exploitation
+logsource:
+  product: webserver
+  service: http
+  category: network
+detection:
+  selection_request_uri:
+    type: regex
+    pattern: (?i)^/assets/built/.*(\.\./|\.\.%2f|\.\.%252f|\.\.\\\\|\.\.%c0%af|\.\.%c0%af|\.\.%5c|\.\.%5C|\.\.%2F|\.\.%252F|\.\.%u00af|\.\.%25C0%AF|\.\.%25c0%af|\.\.%25c0%af|\.\.%252f|\.\.%2f|\.{4}//|\.%2e/|%2e%2e/)
+  selection_path_param:
+    type: regex
+    pattern: (?i)(\.\./|\.\.%2f|\.\.%252f|\.\.%c0%af|\.\.\\\\|\.{4}//|\.%2e/|%2e%2e/)
+  condition: selection_request_uri or selection_path_param
+falsepositives: Legitimate requests that include encoded path segments for legitimate
+  assets (rare). False positives possible if application legitimately includes '../'
+  as part of content or URLs (unlikely for /assets/built/).
+level: high

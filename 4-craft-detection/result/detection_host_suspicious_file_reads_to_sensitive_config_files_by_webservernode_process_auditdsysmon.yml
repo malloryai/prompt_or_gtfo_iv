@@ -1,0 +1,59 @@
+title: 'Host: Suspicious file reads to sensitive config files by webserver/node process
+  (auditd/Sysmon)'
+id: 7e6f5d4c-1b2a-4f3d-8c9e-0a1b2c3d4e5f
+status: test
+description: Detect reads/open operations on sensitive files (package.json, .env,
+  config.*.json, docker-compose.yml, Dockerfile) by processes associated with the
+  web application (e.g., node, ghost) that originate from the webserver process account
+  — may indicate successful directory traversal and local file disclosure.
+references:
+- CVE-2023-32235
+- Auditd/Sysmon detection patterns for unexpected file reads
+author: AI-Generated Detection
+date: '2025-08-14'
+modified: '2025-08-14'
+tags:
+- host
+- filesystem
+- T1083
+- CVE-2023-32235
+logsource:
+  product: linux|windows
+  service: auditd|sysmon
+  category: file
+detection:
+  selection_auditd:
+    type: or
+    conditions:
+    - evt.type: open
+      obj.path|endswith:
+      - /package.json
+      - /.env
+      - /config.production.json
+      - /config.development.json
+      - /docker-compose.yml
+      - /Dockerfile
+      - /package-lock.json
+      - /yarn.lock
+      proc.name|contains:
+      - node
+      - ghost
+      - npm
+      - yarn
+    - EventID: 11
+      TargetFilename|endswith:
+      - \package.json
+      - \.env
+      - \config.production.json
+      - \config.development.json
+      - \docker-compose.yml
+      - \Dockerfile
+      Image|contains:
+      - node.exe
+      - ghost.exe
+      - node
+  condition: selection_auditd
+falsepositives: Planned configuration reloads, deployments, or legitimate processes
+  reading configuration during startup or deployments. Correlate with web logs and
+  timeframe to reduce false positives.
+level: high

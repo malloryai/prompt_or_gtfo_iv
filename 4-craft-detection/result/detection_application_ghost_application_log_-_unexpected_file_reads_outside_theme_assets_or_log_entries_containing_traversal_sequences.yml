@@ -1,0 +1,44 @@
+title: 'Application: Ghost application log - unexpected file reads outside theme assets
+  or log entries containing traversal sequences'
+id: 3c9a1b7e-2d4f-4b8c-8a9a-0b1c2d3e4f5a
+status: test
+description: Detect application-level log entries that indicate that Ghost attempted
+  to read or served files with path traversal sequences, served unexpected configuration
+  files, or logged file read operations containing '../' or encoded variants. These
+  entries may indicate successful or attempted exploitation of CVE-2023-32235.
+references:
+- CVE-2023-32235
+- Ghost logs and application behavior
+author: AI-Generated Detection
+date: '2025-08-14'
+modified: '2025-08-14'
+tags:
+- application
+- logging
+- T1190
+- T1083
+- CVE-2023-32235
+logsource:
+  product: application
+  service: ghost
+  category: application
+detection:
+  selection_message:
+    Message|contains_regex:
+    - (?i)/assets/built/.*(\.\./|%2f|%252f|%c0%af|\.{4}//|\\\\)
+    - (?i)fs\.readFile.*(\.\./|%2f|%252f|\\\\)
+    - (?i)GET\s+/assets/built/.*\s+200
+    - (?i)Serving asset from outside|Attempt to access outside|path traversal
+  selection_sensitive_read:
+    Message|contains:
+    - package.json
+    - .env
+    - config.production.json
+    - config.development.json
+    - docker-compose.yml
+    - Dockerfile
+  condition: selection_message and (selection_sensitive_read or selection_message)
+falsepositives: Debug or development logs that intentionally include file paths or
+  tests that access fixtures. Correlate with external HTTP request logs to confirm
+  exploitation attempts.
+level: high

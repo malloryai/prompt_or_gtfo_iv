@@ -1,0 +1,52 @@
+title: 'Webserver: Successful file-read response from /assets/built/ with indicators
+  of sensitive files (package.json, .env, docker-compose)'
+id: a8b6c7d1-3f2e-4f9a-bb2a-4e7f5c1a2dab
+status: test
+description: Detect responses to requests under /assets/built/ that return HTTP 200
+  and response bodies containing markers indicating sensitive files (e.g., "dependencies",
+  "DATABASE_URL", "docker-compose"). These responses may indicate a successful directory
+  traversal and disclosure of configuration or secrets (CVE-2023-32235).
+references:
+- CVE-2023-32235
+- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-32235
+author: AI-Generated Detection
+date: '2025-08-14'
+modified: '2025-08-14'
+tags:
+- web
+- data-theft
+- T1537
+- T1083
+- CVE-2023-32235
+logsource:
+  product: webserver
+  service: http
+  category: network
+  description: Requires web/proxy logs that include response status and response body
+    or a WAF/proxy that logs response payloads.
+detection:
+  selection_path:
+    Url:
+      type: regex
+      pattern: (?i)^/assets/built/.*
+  selection_status:
+    Status:
+    - '200'
+    - 200
+  selection_body_indicators:
+    type: or
+    patterns:
+    - (?i)"dependencies"
+    - '(?i)"name"\s*:'
+    - '(?i)"version"\s*:'
+    - (?i)DATABASE_URL
+    - (?i)NODE_ENV
+    - (?i)GHOST_
+    - (?i)docker-compose
+    - (?i)FROM\s+\w+
+    - '(?i)routes\s*:'
+  condition: selection_path and selection_status and selection_body_indicators
+falsepositives: Some legitimate JSON assets might contain generic keys like "name"
+  or "version". Reduce false positives by correlating with traversal payloads or unexpected
+  content-type (e.g., application/json for an asset expected to be JS/CSS).
+level: critical

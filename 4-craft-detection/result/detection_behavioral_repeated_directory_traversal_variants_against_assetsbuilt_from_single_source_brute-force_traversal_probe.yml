@@ -1,0 +1,43 @@
+title: 'Behavioral: Repeated directory traversal variants against /assets/built/ from
+  single source (brute-force traversal probe)'
+id: f1b2e3d4-5c6a-47e9-9b20-1a2c3d4e5f67
+status: test
+description: Detect multiple requests from the same client IP to /assets/built/ with
+  many different traversal payloads or encodings within a short timeframe — typical
+  of automated scanning and exploitation attempts for path traversal variants.
+references:
+- CVE-2023-32235
+- Ghost advisory
+- 'Exploit analysis: directory traversal brute-force with encoded variants'
+author: AI-Generated Detection
+date: '2025-08-14'
+modified: '2025-08-14'
+tags:
+- behavioral
+- automation
+- web
+- T1190
+- CVE-2023-32235
+logsource:
+  product: webserver
+  service: http
+  category: network
+detection:
+  selection_traversal:
+    type: regex
+    field_candidates:
+    - Url
+    - request
+    - cs_uri_stem
+    - http.request.uri
+    - request_uri
+    pattern: (?i)^/assets/built/.*(\.\./|\.\.%2f|\.\.%252f|\.{4}//|\.\.%c0%af|\.\.%5c|\.%2e/|%2e%2e/|\.\\\\)
+  group_by_src:
+    group_by: src_ip
+    threshold: 5
+    timeframe: 5m
+  condition: selection_traversal and group_by_src
+falsepositives: Automated health-checking or content scanners crafted by legitimate
+  security tools if they scan the path aggressively. Verify user-agent and other indicators
+  before blocking.
+level: high
