@@ -1,0 +1,54 @@
+➜  6-attack-mapping git:(main) ✗ pdm run python3 6-attack-mapping.py --input "the attacker used an sms attack, sneding hundreds to thousands of messags, askign the user to bypass controls on their system, then did a hardware attack"                                                                                       <aws:personal> <region:us-east-2>
+Initializing MITRE ATT&CK mapper with model: gpt-5
+MITRE ATT&CK Technique Mapping Results
+==================================================
+
+Input: the attacker used an sms attack, sneding hundreds to thousands of messags, askign the user to bypass controls on their system, then did a hardware attack
+------------------------------
+Analysis Summary: The activity indicates smishing (phishing via SMS) combined with social engineering to persuade a user to bypass local controls, followed by an ambiguous 'hardware attack' likely related to firmware/boot-level tampering. The SMS volume suggests SMS pumping or an endpoint service exhaustion effect. Primary mappings: T1566.003 (Spearphishing via Service) and T1562.001 (Disable or Modify Tools), with supporting mappings to T1204 (User Execution), T1496.003 (SMS Pumping) / T1499.002 (Service Exhaustion Flood), and low-confidence T1542.* for the hardware-related phase.
+Number of mappings found: 6
+
+Mapping 1:
+  Technique: T1566 - Phishing
+  Confidence: 0.78
+  Best Subtechnique: T1566.003 - Spearphishing via Service
+  Subtechnique Confidence: 0.80
+  Rationale: Use of SMS to contact the victim aligns with smishing/social engineering delivered via a third-party messaging service, consistent with spearphishing via service.
+  Alternatives: 1 other subtechniques
+
+Mapping 2:
+  Technique: T1562 - Impair Defenses
+  Confidence: 0.56
+  Best Subtechnique: T1562.001 - Disable or Modify Tools
+  Subtechnique Confidence: 0.55
+  Rationale: The attacker asked the user to bypass controls on their system, which commonly entails disabling or modifying security tools or settings.
+  Alternatives: 1 other subtechniques
+
+Mapping 3:
+  Technique: T1204 - User Execution
+  Confidence: 0.50
+  Rationale: Persuading the user to bypass controls implies reliance on user action to enable execution or further activity.
+
+Mapping 4:
+  Technique: T1496 - Resource Hijacking
+  Confidence: 0.60
+  Best Subtechnique: T1496.003 - SMS Pumping
+  Subtechnique Confidence: 0.62
+  Rationale: Sending hundreds to thousands of SMS messages aligns with SMS pumping-style high-volume messaging abuse, potentially to overwhelm or pressure the user.
+
+Mapping 5:
+  Technique: T1499 - Endpoint Denial of Service
+  Confidence: 0.45
+  Best Subtechnique: T1499.002 - Service Exhaustion Flood
+  Subtechnique Confidence: 0.45
+  Rationale: A flood of SMS messages can functionally exhaust messaging services or the device’s capacity, resembling a service/application exhaustion against the endpoint.
+  Alternatives: 1 other subtechniques
+
+Mapping 6:
+  Technique: T1542 - Pre-OS Boot
+  Confidence: 0.30
+  Best Subtechnique: T1542.001 - System Firmware
+  Subtechnique Confidence: 0.30
+  Rationale: The phrase 'hardware attack' is ambiguous but commonly refers to firmware/boot-level tampering (e.g., system or component firmware or bootkits).
+  Alternatives: 2 other subtechniques
+
